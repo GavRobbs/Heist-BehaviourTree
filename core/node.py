@@ -1,3 +1,6 @@
+
+#A generic node class - this is only really used for the root node of the tree
+#Every other node is one of the other subtypes
 class Node:
     STATE_SUCCESS = 0
     STATE_FAILED = 1
@@ -13,6 +16,7 @@ class Node:
         self.children.append(childNode)
 
     def display(self, indent):
+        #Recursively print this node and its kids with proper indentation
         print('\t'*indent + self.name)
         
         for child in self.children:

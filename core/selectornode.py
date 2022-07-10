@@ -12,6 +12,8 @@ class SelectorNode(Node):
             child.display(indent)
 
     def process(self):
+        #A selector node evaluates its children and returns
+        #after the first child that returns success
         
         childstatus = self.children[self.currentChild].process()
 

@@ -12,7 +12,8 @@ class SequenceNode(Node):
             child.display(indent)
 
     def process(self):
-        
+        #A sequence node progresses along all of its children
+        #as long as each child returns success, basically a logical AND   
         childstatus = self.children[self.currentChild].process()
 
         if childstatus == Node.STATE_RUNNING:

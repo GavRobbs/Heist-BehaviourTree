@@ -1,5 +1,6 @@
 from .node import Node
 
+#A selector node evaluates its children and returns after the first child that processes successfully (logical OR)
 class SelectorNode(Node):
     def __init__(self, name):
         super().__init__(name)
@@ -11,10 +12,7 @@ class SelectorNode(Node):
         for child in self.children:
             child.display(indent)
 
-    def process(self):
-        #A selector node evaluates its children and returns
-        #after the first child that returns success
-        
+    def process(self):        
         childstatus = self.children[self.currentChild].process()
 
         if childstatus == Node.STATE_RUNNING:

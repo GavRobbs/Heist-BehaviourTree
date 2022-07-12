@@ -1,5 +1,6 @@
 from .node import Node
 
+#A sequence node processes all of its children until it reaches one that returns false (logical AND)  
 class SequenceNode(Node):
     def __init__(self, name):
         super().__init__(name)
@@ -12,8 +13,6 @@ class SequenceNode(Node):
             child.display(indent)
 
     def process(self):
-        #A sequence node progresses along all of its children
-        #as long as each child returns success, basically a logical AND   
         childstatus = self.children[self.currentChild].process()
 
         if childstatus == Node.STATE_RUNNING:

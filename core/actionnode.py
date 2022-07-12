@@ -1,5 +1,7 @@
 from .node import Node
 
+#This is one of the leaf/end nodes of the behaviour tree and represents a specific action. 
+#The tick function runs the action and returns if it was successful or not
 class ActionNode(Node):
     def __init__(self, name, tick_func = None):
         super().__init__(name)
@@ -9,9 +11,6 @@ class ActionNode(Node):
         print('\t'*indent + "Action: " + self.name)
 
     def process(self):
-        #This would be the leaf (end node) of the behaviour tree
-        #and represents a specific action. The tick function would contain
-        #the details of the action and if it was successful or not
         if self.tick != None:
             return self.tick()
         

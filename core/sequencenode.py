@@ -21,5 +21,9 @@ class SequenceNode(Node):
             self.currentChild = 0
             return Node.STATE_FAILED
         elif childstatus == Node.STATE_SUCCESS:
-            self.currentChild = (self.currentChild + 1) % len(self.children)
-            return Node.STATE_SUCCESS
+            self.currentChild += 1
+            if self.currentChild == len(self.children):
+                self.currentChild = 0
+                return Node.STATE_SUCCESS
+
+        return Node.STATE_RUNNING

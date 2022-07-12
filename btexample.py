@@ -1,4 +1,5 @@
 from argparse import Action
+from glob import glob
 from core.behaviourtree import BehaviourTree
 from core.node import Node
 from core.actionnode import ActionNode
@@ -23,6 +24,8 @@ theftDecided = False
 planDevised = False
 valuableStolen = ValuableTheftStatus.NONE
 vanEscaped = False
+evadedSecurity = False
+inPrison = False
 balance = 0
 
 def evaluate_checkWallet():
@@ -46,14 +49,32 @@ def evaluate_checkWallet():
         return Node.STATE_SUCCESS
 
 def evaluate_successfulEscape():
+    global evadedSecurity
+    global inPrison
+
+    if inPrison:
+        return Node.STATE_FAILED
+
     escapeChance = random.randrange(0, 10)
     if escapeChance <= 2:
         print("NOOOO! Got caught by the cops!")
         print("Got sentenced and now I'm languishing in prison for my crimes")
+        evadedSecurity = False
+        inPrison = True
         return Node.STATE_FAILED
     else:
         print("I evaded the museum security!")
+        evadedSecurity = True
+        inPrison = False
         return Node.STATE_SUCCESS
+
+def evaluate_evadedSecurity():
+    global inPrison
+
+    if inPrison:
+        return Node.STATE_SUCCESS
+    else:
+        return Node.STATE_FAILED
 
 def tick_decideOnTheft():
     global theftDecided
@@ -138,12 +159,16 @@ def tick_leavePrison():
     global vanEscaped
     global walletChecked
     global valuableStolen
+    global evadedSecurity
+    global inPrison
 
     print("Well that sucked! I'm happy to be a free man again.")
     theftDecided = False
     planDevised = False
     vanEscaped = False
     walletChecked = False
+    evadedSecurity = False
+    inPrison = False
     valuableStolen = ValuableTheftStatus.NONE
     return Node.STATE_SUCCESS
 
@@ -154,12 +179,16 @@ def tick_nextHeist():
     global vanEscaped
     global walletChecked
     global valuableStolen
+    global evadedSecurity
+    global inPrison
 
     print("Great heist guys, let's prepare for the next one")
     theftDecided = False
     planDevised = False
     vanEscaped = False
     walletChecked = False
+    evadedSecurity = False
+    inPrison = False
     valuableStolen = ValuableTheftStatus.NONE
     return Node.STATE_SUCCESS
 
@@ -168,6 +197,7 @@ if __name__ == '__main__':
     random.seed()
 
     tree = BehaviourTree("Root")
+    phaseSelector = SelectorNode("Pick phase")
     plottingPhase = SequenceNode("Plotting phase")
     checkFinancialStatus = ConditionNode("Am I broke?", evaluate_checkWallet)
     decideToSteal = ActionNode("Decide to steal something", tick_decideOnTheft)
@@ -185,9 +215,11 @@ if __name__ == '__main__':
     sellValuable = ActionNode("Sell stolen valuable", tick_pawnItem)
     celebrate = ActionNode("Celebrate heist", tick_nextHeist)
 
-    goToPrison = SequenceNode("Go To Prison")
+    checkImprisonment = ConditionNode("Am I imprisoned?", evaluate_evadedSecurity)
+    goToPrison = SequenceNode("Prison Phase")
     payLawyer = ActionNode("Pay my lawyer", tick_payLawyer)
     getOutOfPrison = ActionNode("Leave prison", tick_leavePrison)
+    goToPrison.addChild(checkImprisonment)
     goToPrison.addChild(payLawyer)
     goToPrison.addChild(getOutOfPrison)
 
@@ -195,15 +227,17 @@ if __name__ == '__main__':
     plottingPhase.addChild(decideToSteal)
     plottingPhase.addChild(startPlotting)
     plottingPhase.addChild(executePlan)
-    tree.addChild(plottingPhase)
+    
+    phaseSelector.addChild(plottingPhase)
+    phaseSelector.addChild(goToPrison)
+    tree.addChild(phaseSelector)
 
     executePlan.addChild(selectTarget)    
     selectTarget.addChild(stealDiamondNode)
     selectTarget.addChild(stealPaintingNode)
+    executePlan.addChild(escapeSuccessful)
     executePlan.addChild(ending)
-    executePlan.addChild(goToPrison)
 
-    ending.addChild(escapeSuccessful)
     ending.addChild(escapeToVan)
     ending.addChild(sellValuable)
     ending.addChild(celebrate)

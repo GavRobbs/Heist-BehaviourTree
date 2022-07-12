@@ -6,6 +6,7 @@ from core.actionnode import ActionNode
 from core.sequencenode import SequenceNode
 from core.selectornode import SelectorNode
 from core.conditionnode import ConditionNode
+from core.inverternode import InverterNode
 
 from enum import Enum
 import random
@@ -25,7 +26,7 @@ planDevised = False
 valuableStolen = ValuableTheftStatus.NONE
 vanEscaped = False
 evadedSecurity = False
-inPrison = False
+notInPrison = True
 balance = 0
 
 def evaluate_checkWallet():
@@ -50,9 +51,9 @@ def evaluate_checkWallet():
 
 def evaluate_successfulEscape():
     global evadedSecurity
-    global inPrison
+    global notInPrison
 
-    if inPrison:
+    if not notInPrison:
         return Node.STATE_FAILED
 
     escapeChance = random.randrange(0, 10)
@@ -60,18 +61,18 @@ def evaluate_successfulEscape():
         print("NOOOO! Got caught by the cops!")
         print("Got sentenced and now I'm languishing in prison for my crimes")
         evadedSecurity = False
-        inPrison = True
+        notInPrison = False
         return Node.STATE_FAILED
     else:
         print("I evaded the museum security!")
         evadedSecurity = True
-        inPrison = False
+        notInPrison = True
         return Node.STATE_SUCCESS
 
 def evaluate_evadedSecurity():
-    global inPrison
+    global notInPrison
 
-    if inPrison:
+    if notInPrison:
         return Node.STATE_SUCCESS
     else:
         return Node.STATE_FAILED
@@ -160,7 +161,7 @@ def tick_leavePrison():
     global walletChecked
     global valuableStolen
     global evadedSecurity
-    global inPrison
+    global notInPrison
 
     print("Well that sucked! I'm happy to be a free man again.")
     theftDecided = False
@@ -168,7 +169,7 @@ def tick_leavePrison():
     vanEscaped = False
     walletChecked = False
     evadedSecurity = False
-    inPrison = False
+    notInPrison = True
     valuableStolen = ValuableTheftStatus.NONE
     return Node.STATE_SUCCESS
 
@@ -180,7 +181,7 @@ def tick_nextHeist():
     global walletChecked
     global valuableStolen
     global evadedSecurity
-    global inPrison
+    global notInPrison
 
     print("Great heist guys, let's prepare for the next one")
     theftDecided = False
@@ -188,7 +189,7 @@ def tick_nextHeist():
     vanEscaped = False
     walletChecked = False
     evadedSecurity = False
-    inPrison = False
+    notInPrison = True
     valuableStolen = ValuableTheftStatus.NONE
     return Node.STATE_SUCCESS
 
@@ -215,7 +216,9 @@ if __name__ == '__main__':
     sellValuable = ActionNode("Sell stolen valuable", tick_pawnItem)
     celebrate = ActionNode("Celebrate heist", tick_nextHeist)
 
-    checkImprisonment = ConditionNode("Am I imprisoned?", evaluate_evadedSecurity)
+    checkFreedom = ConditionNode("Am I free?", evaluate_evadedSecurity)
+    checkImprisonment = InverterNode("")
+    checkImprisonment.addChild(checkFreedom)
     goToPrison = SequenceNode("Prison Phase")
     payLawyer = ActionNode("Pay my lawyer", tick_payLawyer)
     getOutOfPrison = ActionNode("Leave prison", tick_leavePrison)
@@ -246,8 +249,9 @@ if __name__ == '__main__':
     print("========================\n")
     tree.display(0)
 
-    input()
-    print("Tree execution")
+    input("\n\nPress RETURN to proceed to tree execution")
+
+    print("\nTree execution")
     print("========================\n")
 
     while(True):

@@ -56,7 +56,7 @@ def evaluate_successfulEscape():
     if not notInPrison:
         return Node.STATE_FAILED
 
-    escapeChance = random.randrange(0, 10)
+    escapeChance = random.randrange(0, 20)
     if escapeChance <= 2:
         print("NOOOO! Got caught by the cops!")
         print("Got sentenced and now I'm languishing in prison for my crimes")

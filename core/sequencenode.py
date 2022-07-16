@@ -17,10 +17,12 @@ class SequenceNode(Node):
 
         if childstatus == Node.STATE_RUNNING:
             return Node.STATE_RUNNING
-        elif childstatus == Node.STATE_FAILED:
+
+        if childstatus == Node.STATE_FAILED:
             self.currentChild = 0
             return Node.STATE_FAILED
-        elif childstatus == Node.STATE_SUCCESS:
+        
+        if childstatus == Node.STATE_SUCCESS:
             self.currentChild += 1
             if self.currentChild == len(self.children):
                 self.currentChild = 0

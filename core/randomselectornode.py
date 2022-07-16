@@ -22,7 +22,9 @@ class RandomSelectorNode(Node):
     def process(self):
 
         if self.currentChild == -1:
-            self.currentChild = random.randint(0, len(self.children) * self.scale)
+            #Using randrange instead of randint because I don't want to
+            #include the endpoint
+            self.currentChild = random.randrange(0, len(self.children) * self.scale)
 
         childstatus = self.children[math.floor(self.currentChild / self.scale)].process()
 
@@ -30,4 +32,4 @@ class RandomSelectorNode(Node):
             return Node.STATE_RUNNING
         else:
             self.currentChild = -1
-            return childstatus        
+            return childstatus         

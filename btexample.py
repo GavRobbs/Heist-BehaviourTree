@@ -7,6 +7,7 @@ from core.sequencenode import SequenceNode
 from core.selectornode import SelectorNode
 from core.conditionnode import ConditionNode
 from core.inverternode import InverterNode
+from core.randomselectornode import RandomSelectorNode
 
 from enum import Enum
 import random
@@ -100,13 +101,8 @@ def tick_devisePlan():
 def tick_stealDiamond():
     global valuableStolen
     if valuableStolen == ValuableTheftStatus.NONE:
-        chance = random.randrange(0, 10, 1)
-
-        if chance <= 3:
-            valuableStolen = ValuableTheftStatus.DIAMOND_STOLEN
-            print("Managed to steal the diamond!")
-        else:
-            return Node.STATE_FAILED
+        valuableStolen = ValuableTheftStatus.DIAMOND_STOLEN
+        print("Managed to steal the diamond!")
     else:
         pass
         #print("I already stole the diamond, I need to get away")
@@ -205,7 +201,7 @@ if __name__ == '__main__':
     startPlotting = ActionNode("Start the plotting", tick_devisePlan)
     executePlan = SequenceNode("Execute the plan")
 
-    selectTarget = SelectorNode("Picking diamond or painting to steal")
+    selectTarget = RandomSelectorNode("Picking diamond or painting to steal", 5)
     stealDiamondNode = ActionNode("Steal diamond", tick_stealDiamond)
     stealPaintingNode = ActionNode("Steal painting", tick_stealPainting)
 

@@ -57,7 +57,7 @@ def evaluate_successfulEscape():
     if not notInPrison:
         return Node.STATE_FAILED
 
-    escapeChance = random.randrange(0, 20)
+    escapeChance = random.randrange(0, 15)
     if escapeChance <= 2:
         print("NOOOO! Got caught by the cops!")
         print("Got sentenced and now I'm languishing in prison for my crimes")
@@ -147,7 +147,11 @@ def tick_pawnItem():
 def tick_payLawyer():
     global balance
     print("Paid my lawyer to get me out of prison - he didn't come cheap")
-    balance = round(balance * 0.5)
+
+    if balance > 0:
+        balance = round(balance * 0.65)
+    else:
+        balance -= 300000
     return Node.STATE_SUCCESS
 
 def tick_leavePrison():

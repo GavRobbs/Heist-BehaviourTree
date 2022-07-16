@@ -17,9 +17,14 @@ class SelectorNode(Node):
 
         if childstatus == Node.STATE_RUNNING:
             return Node.STATE_RUNNING
-        elif childstatus == Node.STATE_FAILED:
-            self.currentChild = (self.currentChild + 1) % len(self.children)
-            return Node.STATE_FAILED
         elif childstatus == Node.STATE_SUCCESS:
             self.currentChild = 0
             return Node.STATE_SUCCESS
+        elif childstatus == Node.STATE_FAILED:
+            self.currentChild += 1
+            if self.currentChild == len(self.children):
+                self.currentChild = 0
+                return Node.STATE_FAILED
+
+        return Node.STATE_RUNNING
+        

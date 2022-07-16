@@ -6,7 +6,8 @@ This example demonstrates:
 - Action Nodes
 - Condition Nodes
 - Sequence Nodes
-- Selector Nodes
+- Regular Selector Nodes
+- Random Selector Nodes
 - Inverters
 
 ## Usage and Expected Results
@@ -47,6 +48,8 @@ All nodes in a behaviour tree can be classified into one of three types:
 - Composite nodes
 
 Leaf nodes have no children, and are used to perform an action or check a condition. Decorator nodes have one child, and are often used to modify the result of that child. Composite nodes consist of one or more children nodes.
+
+In essence a behaviour tree acts as a higher level programming language on top of your actual language, giving the sequence of instructions you want your autonomous agents to follow, with the addition of features such as conditionality.
 
 ### Leaf Nodes
 
@@ -95,9 +98,17 @@ The rules are as follows:
 - Otherwise, if the number of failures is greater than N - M + 1, then it returns FAILED.
 - The fall through case here is to return RUNNING.
 
-The parallel node is so named because it runs in parallel, ie. it evaluates multiple nodes simultaneously to determine the result. As an example, given a parallel node with children, with M = 3:
+The parallel node is so named because it runs in parallel, ie. it evaluates multiple nodes simultaneously to determine the result. As an example, given a parallel node with 5 children (N = 5) and M = 3:
 - If 3 or more nodes return SUCCESS, then the parallel node returns SUCCESS
 - If 3 or more nodes return FAILURE, then the parallel node returns failure (5 - 3 + 1)
 - Otherwise, the node returns RUNNING
+
+## Practical Considerations
+
+### Inventing New Nodes
+
+Custom node types can be created to meet specific nodes. Some examples are:
+- Random selectors - pick a random child to execute until one returns SUCCESS
+- Priority selectors - which evaluate children in order of an explicitly specified priorities, which can be dynamically reprioritized
 
 

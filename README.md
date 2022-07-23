@@ -105,6 +105,21 @@ The parallel node is so named because it runs in parallel, ie. it evaluates mult
 
 ## Practical Considerations
 
+### Statefulness and Long-Running Actions
+
+It is generally advisable keep statefulness in the nodes of a behaviour tree to a minimum. Minimum is relative (since nodes contain information about their children, and sometimes a priority ranking), and this isn't a hard and fast rule, but this guidance should help to reduce the chances of undefined behaviour due to some variable having an expected value. The rule was broken in this example for the sake of simplicity, but its stated here for the sake of completeness.
+
+The execution style of a leaf or decorator node can be said to be instant or continuous. A leaf node with an instant execution style evaluates and returns a result immediately. One with a continuous execution style evaluates until some condition is met then returns SUCCESS or FAILED. Nodes with a continuous execution style are important for long running tasks that don't instantly succeed or fail (eg. pathfinding towards a target in a game).
+
+Many times, nodes with a continuous execution style need to maintain some state in order to carry out their actions and properly evaluate if they have succeeded or failed. This can easily turn into a kludge, with lots of variables cluttering the body of the agent class in question to help maintain state.
+
+One way around this is creating a custom TaskRunnerNode, and deriving classes from it for actions that you expect to be continuously executed. I didn't use it in this example, but I've included a sample of how it could be structured in taskrunnernode.py.The task runner node defines functions for onStart, onRunTask and onExit, corresponding to the node lifecycle. These should be overriden in the derived node. The simplified operation of the TaskRunnerNode is as follows:
+- When the node is first switched to, onStart() is executed
+- For as long as the task is incomplete, the specifics of the logic take place in OnRunTask(), and it returns RUNNING
+- When the task is either SUCCESS or FAILED, onExit() is called, and this carries out cleanup logic and resets the node for future usage.
+
+Nodes with a continuous execution style aren't only limited to being actions, they can also be conditions ie. monitoring nodes. These nodes continuously evaluate a condition and allow processing to continue to the child nodes or fail out depending on the outcome.
+
 ### Inventing New Nodes
 
 Custom node types can be created to meet specific nodes. Some examples are:

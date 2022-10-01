@@ -12,6 +12,6 @@ class ActionNode(Node):
 
     def process(self):
         if self.tick != None:
-            return self.tick()
+            return self.tick(self.blackboard)
         
         return Node.STATE_FAILED

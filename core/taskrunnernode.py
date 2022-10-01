@@ -28,6 +28,7 @@ class TaskRunnerNode(Node):
         if not self._started:
             self.onStart()
             self._started = True
+            return Node.STATE_RUNNING
         
         status = self.onRunTask()
 

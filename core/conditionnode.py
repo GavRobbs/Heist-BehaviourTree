@@ -17,6 +17,6 @@ class ConditionNode(Node):
 
     def process(self):
         if self.evaluator != None:
-            return self.evaluator()
+            return self.evaluator(self.blackboard)
         
         return Node.STATE_SUCCESS

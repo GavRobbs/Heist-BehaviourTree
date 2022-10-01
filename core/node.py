@@ -11,8 +11,10 @@ class Node:
         self.children = []
         self.currentChild = 0
         self.name = name
+        self.blackboard = None
 
     def addChild(self, childNode):
+        childNode.bind(self.blackboard)
         self.children.append(childNode)
 
     def display(self, indent):
@@ -24,5 +26,10 @@ class Node:
 
     def process(self):
         return self.children[self.currentChild].process()
+
+    def bind(self, blackboard):
+        self.blackboard = blackboard
+        for child in self.children:
+            child.bind(blackboard)
 
     

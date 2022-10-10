@@ -1,4 +1,5 @@
 from core.behaviourtree import BehaviourTree
+from core.blackboard import Blackboard
 from core.node import Node
 from core.actionnode import ActionNode
 from core.sequencenode import SequenceNode
@@ -14,7 +15,7 @@ import sys
 
 
 
-class HeistBlackboard:
+class HeistBlackboard(Blackboard):
 
     class ValuableTheftStatus(Enum):
         NONE = 0

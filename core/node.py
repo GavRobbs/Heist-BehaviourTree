@@ -17,7 +17,8 @@ class Node:
         self.blackboard = None
 
     def addChild(self, childNode):
-        childNode.bind(self.blackboard)
+        if self.blackboard is not None:
+            childNode.bind(self.blackboard)
         self.children.append(childNode)
 
     def display(self, indent):
@@ -31,7 +32,7 @@ class Node:
         return self.children[self.currentChild].process()
 
     def bind(self, blackboard):
-        if issubclass(blackboard, Blackboard):
+        if isinstance(blackboard, Blackboard):
             self.blackboard = blackboard
             for child in self.children:
                 child.bind(blackboard)
